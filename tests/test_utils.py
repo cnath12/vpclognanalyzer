@@ -13,8 +13,8 @@ class TestUtils(unittest.TestCase):
             'Untagged': 3
         }
         self.port_protocol_counts = {
-            (25, Protocol.TCP): 2,
-            (68, Protocol.UDP): 1
+            (25, 'tcp'): 2,
+            (68, 'udp'): 1
         }
 
     @patch('builtins.open')
@@ -22,7 +22,25 @@ class TestUtils(unittest.TestCase):
         mock_file = StringIO()
         mock_open_.return_value.__enter__.return_value = mock_file
         
-        write_output(self.tag_counts, 'output.csv', ['Tag', 'Count'])
+        with patch('os.makedirs') as mock_makedirs:  # Mock makedirs
+            write_output(self.tag_counts, './output/test.csv', ['Tag', 'Count'])
+            
+            # Verify makedirs was called with correct path
+            mock_makedirs.assert_called_once_with('./output', exist_ok=True)
+        
+        mock_file.seek(0)
+        reader = csv.DictReader(mock_file)
+        written_data = {row['Tag']: int(row['Count']) for row in reader}
+        
+        self.assertEqual(written_data, self.tag_counts)
+
+    @patch('builtins.open')
+    def test_write_to_current_directory(self, mock_open_):
+        mock_file = StringIO()
+        mock_open_.return_value.__enter__.return_value = mock_file
+        
+        # Should not raise any error when writing to current directory
+        write_output(self.tag_counts, 'test.csv', ['Tag', 'Count'])
         
         mock_file.seek(0)
         reader = csv.DictReader(mock_file)

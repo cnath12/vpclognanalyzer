@@ -6,9 +6,9 @@ from src.models import Protocol
 class TestFlowLogAnalyzer(unittest.TestCase):
     def setUp(self):
         self.lookup_table = {
-            (25, Protocol.TCP): 'sv_P1',
-            (68, Protocol.UDP): 'sv_P2',
-            (0, Protocol.ICMP): 'sv_P5'
+            (25, 'tcp'): 'sv_P1',
+            (68, 'udp'): 'sv_P2',
+            (0, 'icmp'): 'sv_P5'
         }
         self.analyzer = FlowLogAnalyzer(self.lookup_table)
 
@@ -17,7 +17,7 @@ class TestFlowLogAnalyzer(unittest.TestCase):
         self.analyzer.process_line(line)
         
         self.assertEqual(self.analyzer.tag_counts['sv_P1'], 1)
-        self.assertEqual(self.analyzer.port_protocol_counts[(25, Protocol.TCP)], 1)
+        self.assertEqual(self.analyzer.port_protocol_counts[(25, 'tcp')], 1)
 
     def test_analyze_file(self):
         mock_content = "\n".join([
