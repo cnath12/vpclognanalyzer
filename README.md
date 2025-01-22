@@ -135,6 +135,13 @@ python main.py test_data/input/flow.log test_data/input/lookup.csv test_data/out
 
 Then compare your outputs with the expected results in `test_data/expected/`.
 
+## Limitations
+
+- Only supports VPC Flow Log Version 2
+- Only analyzes destination port and protocol for tagging
+- No support for custom flow log formats
+- Limited to predefined protocols (TCP, UDP, ICMP)
+
 ## Error Handling and Logging
 The program includes comprehensive error handling and logging:
 - Invalid file formats
